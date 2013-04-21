@@ -1,3 +1,8 @@
+NOTICE
+======
+
+*Knockup is not being maintained anymore. It has been completely rewritten as [velcro.js](https://github.com/devco/velcro.js).*
+
 Knockup - MVC for Knockout
 ==========================
 
