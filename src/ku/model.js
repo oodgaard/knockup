@@ -171,8 +171,8 @@ function defineComputed(obj) {
         obj[name] = ko.computed({
             owner: obj,
             deferEvaluation: true,
-            read: computed.read,
-            write: computed.write
+            read: computed.read || function(){},
+            write: computed.write || function(){}
         });
     });
 }
