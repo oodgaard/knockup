@@ -458,7 +458,7 @@ ku.Http.prototype = {
 
             if (typeof headers['Content-Type'] === 'string' && typeof self.parsers[headers['Content-Type']] === 'function') {
                 response = self.parsers[headers['Content-Type']](response);
-            } else if (typeof self.headers.Accept === 'string' && typeof self.parsers[self.headers.Accept] === 'function') {
+            } else if (typeof self.headers.Accept === 'string' && typeof self.parsers[self.headers.Accept] === 'function' && request.status !== 500) {
                 response = self.parsers[self.headers.Accept](response);
             }
 
