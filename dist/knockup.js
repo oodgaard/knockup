@@ -453,12 +453,6 @@ ku.Http.prototype = {
                 return;
             }
 
-            if (request.status !== 200 && request.status !== 304) {
-                self.events.trigger('error', [request]);
-                self.events.trigger('stop', [request]);
-                return;
-            }
-
             var response = request.responseText,
                 headers  = request.getAllResponseHeaders();
 
@@ -466,6 +460,12 @@ ku.Http.prototype = {
                 response = self.parsers[headers['Content-Type']](response);
             } else if (typeof self.headers.Accept === 'string' && typeof self.parsers[self.headers.Accept] === 'function') {
                 response = self.parsers[self.headers.Accept](response);
+            }
+
+            if (request.status !== 200 && request.status !== 304) {
+                self.events.trigger('error', [response, request]);
+                self.events.trigger('stop', [response, request]);
+                return;
             }
 
             if (typeof fn === 'function') {
@@ -503,12 +503,12 @@ ku.Http.prototype = {
 
     createRequestObject: function() {
         var request   = false;
-            factories = [
-                function () { return new XMLHttpRequest(); },
-                function () { return new ActiveXObject('Msxml2.XMLHTTP'); },
-                function () { return new ActiveXObject('Msxml3.XMLHTTP'); },
-                function () { return new ActiveXObject('Microsoft.XMLHTTP'); }
-            ];
+        factories = [
+            function () { return new XMLHttpRequest(); },
+            function () { return new ActiveXObject('Msxml2.XMLHTTP'); },
+            function () { return new ActiveXObject('Msxml3.XMLHTTP'); },
+            function () { return new ActiveXObject('Microsoft.XMLHTTP'); }
+        ];
 
         for (var i = 0; i < factories.length; i++) {
             try {

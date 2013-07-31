@@ -59,8 +59,6 @@ asyncTest('View', function() {
     ku.run(div);
 });
 
-
-
 module('Models and Collections');
 
 test('Defining', function() {
@@ -272,8 +270,6 @@ test('No Model Binding', function() {
 
     ok(view.target.innerHTML === 'test', 'The view should render without a bound model.');
 });
-
-
 
 module('Http');
 
