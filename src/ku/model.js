@@ -25,7 +25,7 @@ ku.model = function(definition) {
                 }
             });
 
-            this.observer.notifySubscribers();
+            this.observer.notifySubscribers(this);
 
             return this;
         };
