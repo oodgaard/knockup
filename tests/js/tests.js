@@ -120,6 +120,32 @@ test('Relationships', function() {
     ok(exported.friends[1].name === user.friends().at(1).name(), 'Lizard should be 3rd best.');
 });
 
+test('Dynamic Relationships - Starting Undefined', function() {
+    var Parent = ku.model({
+        name: 'parent'
+    });
+
+    var par = new Parent;
+    par.relate('child', ku.model({
+        name: 'child'
+    }));
+
+    ok(par.child().name() === 'child');
+});
+
+test('Dynamic Relationships - Starting Defined', function() {
+    var par = new (ku.model({
+        name: 'parent',
+        child: { name: 'child' }
+    }));
+
+    par.relate('child', ku.model({
+        name: ''
+    }));
+
+    ok(par.child().name() === 'child');
+});
+
 test('Collection Manipulation', function() {
     var Item = ku.model({
         name: ''

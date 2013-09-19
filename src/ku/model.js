@@ -8,6 +8,19 @@ ku.model = function(definition) {
             return clone;
         };
 
+        this.relate = function(name, fn) {
+            var oldval;
+
+            if (typeof this.$self.properties[name] !== 'undefined') {
+                oldval = this[name]();
+            }
+
+            this.$self.relations[name] = fn;
+            this[name] = (new fn(oldval)).observer;
+
+            return this;
+        };
+
         this.from = function(obj) {
             if (ku.isModel(obj)) {
                 var data = obj.raw();
