@@ -66,7 +66,28 @@ ku.collection = function(model) {
     var Collection = function(data) {
         Array.prototype.push.apply(this, []);
 
+        this.doNotifySubscribers = true;
+
         this.observer = generateObserver(this);
+
+        this.notifySubscribers = function() {
+            if (this.doNotifySubscribers) {
+                this.observer.notifySubscribers(this);
+            }
+        };
+
+        this.suppressNotification = function(callback) {
+            this.doNotifySubscribers = false;
+
+            try {
+                callback();
+            } catch (e) {
+                this.doNotifySubscribers = true;
+                throw e;
+            }
+
+            this.doNotifySubscribers = true;
+        };
 
         this.aggregate = function(joiner, fields) {
             var arr = [];
@@ -113,7 +134,7 @@ ku.collection = function(model) {
             if (this.has(at)) {
                 Array.prototype.splice.call(this, at, 1);
 
-                this.observer.notifySubscribers(this);
+                this.notifySubscribers(this);
             }
 
             return this;
@@ -121,7 +142,7 @@ ku.collection = function(model) {
 
         this.empty = function() {
             Array.prototype.splice.call(this, 0, this.length);
-            this.observer.notifySubscribers(this);
+            this.notifySubscribers(this);
 
             return this;
         };
@@ -139,7 +160,7 @@ ku.collection = function(model) {
             item.$parent = this.$parent;
 
             Array.prototype.splice.call(this, at, 0, item);
-            this.observer.notifySubscribers(this);
+            this.notifySubscribers(this);
 
             return this;
         };
@@ -149,7 +170,7 @@ ku.collection = function(model) {
             item.$parent = this.$parent;
 
             Array.prototype.splice.call(this, at, 1, item);
-            this.observer.notifySubscribers(this);
+            this.notifySubscribers(this);
 
             return this;
         };
@@ -174,13 +195,13 @@ ku.collection = function(model) {
                 data = data.raw();
             }
 
-            each(data, function(i, model) {
-                if (that.has(i)) {
+            this.suppressNotification(function(){
+                each(data, function(i, model) {
                     that.replace(i, model);
-                } else {
-                    that.replace(i, model);
-                }
+                });
             });
+
+            this.notifySubscribers();
 
             return this;
         };

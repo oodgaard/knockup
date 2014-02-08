@@ -1,4 +1,3 @@
-var _undefined;
 
 module('Attribute Bindings');
 
@@ -158,7 +157,7 @@ test('Collection Manipulation', function() {
     var model = new Items;
 
     model.items([{
-        name: 'test1',
+        name: 'test1'
     }, {
         name: 'test2'
     }]);
@@ -166,7 +165,7 @@ test('Collection Manipulation', function() {
     ok(model.items().length === 2, 'Items not set.');
 
     model.items([{
-        name: 'test1',
+        name: 'test1'
     }, {
         name: 'test2'
     }]);
@@ -188,14 +187,15 @@ test('Observable Arrays', function() {
     ku.set('model', new model);
     ku.run(list);
 
-    ok(ku.get('model').items.length === list.childNodes.length, 'No items should be present.');
+    ok(ku.get('model').items().length === list.childNodes.length, 'No items should be present.');
 
     ku.get('model').items([
         'test1',
         'test2'
     ]);
 
-    ok(ku.get('model').items.length === list.childNodes.length, 'Changes in view model not present.');
+
+    ok(ku.get('model').items().length === list.childNodes.length, 'Changes in view model not present.');
 });
 
 test('Computed Observables - Readers and Writers', function() {
@@ -361,4 +361,46 @@ test('Overloading Data and Callback Parameters', function() {
     }, function(r) {
         ok(r.data.arg === 'yes');
     });
+});
+
+
+
+test('Subscription calls once for entire collection', function() {
+    var Wheel = ku.model({
+        nuts: 5,
+        color: 'Black'
+    });
+
+    var Car = ku.model({
+        wheels: Wheel.Collection
+    });
+
+    var car = new Car;
+    var subscriptionCallCount = 0;
+
+    car.wheels.subscribe(function(){
+        subscriptionCallCount++;
+    });
+
+    car.wheels().append({});
+    ok(subscriptionCallCount === 1, 'There should be 1 subscription call.');
+    ok(car.wheels().length === 1, 'There should be 1 wheel.');
+
+    car.wheels().append({});
+    ok(subscriptionCallCount === 2, 'There should be 2 subscription calls.');
+    ok(car.wheels().length === 2, 'There should be 2 wheels.');
+
+
+    var car = new Car;
+    var subscriptionCallCount = 0;
+
+    car.wheels.subscribe(function(){
+        subscriptionCallCount++;
+    });
+
+    car.wheels([{},{},{},{}]);
+
+    ok(subscriptionCallCount === 1, 'There should be 1 subscription call.');
+    ok(car.wheels().length === 4, 'There should be 4 wheels.');
+
 });
