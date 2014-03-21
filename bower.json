@@ -1,6 +1,6 @@
 {
   "name": "knockup",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "main": "src/knockup.js",
   "dependencies": {
     "knockout": "latest",
