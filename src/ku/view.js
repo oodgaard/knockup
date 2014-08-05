@@ -1,7 +1,7 @@
 ku.View = function() {
     this.cache       = {};
     this.http        = new ku.Http();
-    this.http.prefix = 'views/';
+    this.http.prefix = '/views/';
     this.http.suffix = '.html';
     this.http.accept = 'text/html';
 

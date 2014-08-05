@@ -477,10 +477,14 @@ ku.Http.prototype = {
             var response = request.responseText,
                 headers  = request.getAllResponseHeaders();
 
-            if (typeof headers['Content-Type'] === 'string' && typeof self.parsers[headers['Content-Type']] === 'function') {
-                response = self.parsers[headers['Content-Type']](response);
-            } else if (typeof self.headers.Accept === 'string' && typeof self.parsers[self.headers.Accept] === 'function' && request.status !== 500) {
-                response = self.parsers[self.headers.Accept](response);
+            try {
+                if (typeof headers['Content-Type'] === 'string' && typeof self.parsers[headers['Content-Type']] === 'function') {
+                    response = self.parsers[headers['Content-Type']](response);
+                } else if (typeof self.headers.Accept === 'string' && typeof self.parsers[self.headers.Accept] === 'function' && request.status !== 500) {
+                    response = self.parsers[self.headers.Accept](response);
+                }
+            } catch (e) {
+                throw new Error('Error parsing response for request ' + url + ' with message: ' + e);
             }
 
             if (request.status !== 200 && request.status !== 304) {
@@ -1263,7 +1267,7 @@ function dispatch() {
 ku.View = function() {
     this.cache       = {};
     this.http        = new ku.Http();
-    this.http.prefix = 'views/';
+    this.http.prefix = '/views/';
     this.http.suffix = '.html';
     this.http.accept = 'text/html';
 
